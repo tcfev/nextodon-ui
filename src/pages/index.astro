@@ -1,7 +1,22 @@
-<p>
-	<a href="/oauth/authorize">Authorize</a>
-</p><p>
-	<a href="/auth/sign_up">Sign Up</a>
-</p><p>
-	<a href="/auth/sign_in">Sign In</a>
-</p>
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Nextodon">
+	<p>
+		<a
+			class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+			href="/oauth/authorize">Authorize</a
+		>
+	</p><p>
+		<a
+			class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+			href="/auth/sign_up">Sign Up</a
+		>
+	</p><p>
+		<a
+			class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+			href="/auth/sign_in">Sign In</a
+		>
+	</p>
+</Layout>
