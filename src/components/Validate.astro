@@ -1,0 +1,210 @@
+<section class="bg-gray-50 dark:bg-gray-900">
+    <div
+        class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+    >
+        <a
+            href="#"
+            class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        >
+            <img class="w-8 h-8 mr-2" src="/favicon.ico" alt="Nextodon" />
+            Nextodon
+        </a>
+        <div
+            class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+        >
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1
+                    class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+                >
+                    Sign in to your account
+                </h1>
+                <form class="space-y-4 md:space-y-6" action="#">
+                    <div>
+                        <label
+                            id="test"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >Your mnemonic words</label
+                        >
+
+                        <textarea
+                            id="mnemonic"
+                            title="Mnemonic"
+                            rows="5"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Example: smoke goat bus ketchup doctor artwork lizard actress armed fringe sing pond"
+                        ></textarea>
+                    </div>
+
+                    <div
+                        id="suggestions"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                    </div>
+
+                    <button
+                        id="submit"
+                        type="button"
+                        class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                        >Sign in</button
+                    >
+                    <p
+                        class="text-sm font-light text-gray-500 dark:text-gray-400"
+                    >
+                        Don't have an account yet? <a
+                            href="#"
+                            class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                            >Sign up</a
+                        >
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import { login, words } from "../components/login";
+
+    const ws = words();
+
+    for (var w in ws) {
+        let c = ws[w];
+
+        console.dir(c);
+    }
+
+    function getSuggestions(value: string): string[] {
+        if (value && value.length > 0) {
+            const matches = ws.filter((word) => word.startsWith(value));
+
+            if (matches.length == 1 && matches[0] == value) {
+                return [];
+            }
+            return matches;
+        }
+        return [];
+    }
+
+    function replaceDoubleSpaces(value: string): string {
+        var v = value;
+
+        while (v.indexOf("  ") > -1) {
+            v = v.replaceAll("  ", " ");
+        }
+
+        return v;
+    }
+
+    async function submit() {
+        const mnemonicTA = document.getElementById(
+            "mnemonic"
+        ) as HTMLTextAreaElement;
+        const mnemonic = mnemonicTA.value;
+
+        const token = await login(mnemonic);
+
+        const query = new URLSearchParams(window.location.search);
+        const redirectUri = query.get("redirect_uri");
+
+        if (token) {
+            if (redirectUri) {
+                window.location.href = redirectUri + "?code=" + token;
+            } else {
+                window.location.href = "/";
+            }
+        }
+    }
+
+    async function test() {
+        const mnemonic =
+            "smoke goat bus ketchup doctor artwork lizard actress armed fringe sing pond";
+
+        const token = await login(mnemonic);
+
+        const query = new URLSearchParams(window.location.search);
+        const redirectUri = query.get("redirect_uri");
+
+        if (token) {
+            if (redirectUri) {
+                window.location.href = redirectUri + "?code=" + token;
+            } else {
+                window.location.href = "/";
+            }
+        }
+    }
+
+    const mnemonic = document.getElementById("mnemonic") as HTMLTextAreaElement;
+    const sug = document.getElementById("suggestions");
+
+    function getCurrentWord(): string | null {
+        const value = mnemonic.value;
+        const words = value.split(" ");
+
+        if (words && words.length > 0) {
+            return words[words.length - 1];
+        }
+    }
+
+    mnemonic?.addEventListener("change", (e) => {});
+    mnemonic?.addEventListener("input", (e: InputEvent) => {
+        const data = e.data;
+
+        const value = mnemonic.value;
+        const fixed = replaceDoubleSpaces(value);
+
+        if (value != fixed) {
+            const selectionStart = mnemonic.selectionStart;
+            const selectionEnd = mnemonic.selectionEnd;
+
+            var matches = 0;
+
+            if (selectionEnd > -1 && selectionEnd < value.length) {
+                const m = value.substring(0, selectionEnd).match(/g' '/);
+
+                if (m != null) {
+                    matches = m.length;
+                }
+            }
+
+            mnemonic.value = fixed;
+
+            mnemonic.selectionStart = selectionStart;
+            mnemonic.selectionEnd = selectionEnd - matches - 1;
+        }
+
+        if (data == " ") {
+            return;
+        }
+
+        const lastWord = getCurrentWord();
+        const suggestions = getSuggestions(lastWord);
+
+        let best = suggestions.slice(0, 5);
+        sug.innerHTML = "";
+
+        if (best.length != 1) {
+            if (best[0] == lastWord) {
+                best = [];
+            }
+        }
+
+        for (let i of best) {
+            let btn = document.createElement("span");
+            btn.className =
+                "text-xs font-semibold inline-block py-1 px-2 uppercase rounded text-pink-600 bg-pink-200 uppercase last:mr-0 mr-1";
+
+            btn.innerHTML = i;
+            sug.appendChild(btn);
+        }
+    });
+
+    const testButton = document.getElementById("test");
+    testButton?.addEventListener("click", () => {
+        test();
+    });
+
+    const submitButton = document.getElementById("submit");
+    submitButton?.addEventListener("click", () => {
+        submit();
+    });
+</script>

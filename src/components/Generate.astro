@@ -1,0 +1,126 @@
+<section class="bg-gray-50 dark:bg-gray-900">
+    <div
+        class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+    >
+        <a
+            href="#"
+            class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        >
+            <img class="w-8 h-8 mr-2" src="/favicon.ico" alt="Nextodon" />
+            Nextodon
+        </a>
+        <div
+            class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+        >
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1
+                    class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+                >
+                    Create an account
+                </h1>
+                <div class="space-y-4 md:space-y-6">
+                    <div>
+                        <label
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >Your mnemonic words</label
+                        >
+
+                        <div
+                            id="words"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                        </div>
+                        <div
+                            class="block mb-2 text-sm font-medium text-white dark:text-white"
+                        >
+                            &nbsp;
+                        </div>
+                        <button
+                            id="regenerate"
+                            type="button"
+                            class="w-full text-white bg-pink-600 hover:bg-pink-700 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-pink-600 dark:hover:bg-pink-700"
+                            >Randomize</button
+                        >
+
+                        <div
+                            class="block mb-2 text-sm font-medium text-white dark:text-white"
+                        >
+                            &nbsp;
+                        </div>
+                        <div
+                            class="block mb-2 text-sm font-medium text-white dark:text-white"
+                        >
+                            <ul class="list-disc text-white dark:text-white">
+                                <li>
+                                    Please take a note of the 12 words above on
+                                    a piece of <em>paper</em>!
+                                </li>
+                                <li>
+                                    In the next step we will verify if you have
+                                    noted the words.
+                                </li>
+                                <li>
+                                    <em>Important</em>: Do not take screenshots
+                                    from this page. Lots of apps on your
+                                    phone/PC have access to your galley.
+                                </li>
+                                <li>
+                                    <em>Important</em>: Make sure no one is
+                                    watching your screen and you are not under a
+                                    CCTV camera. In case your words are exposed,
+                                    use the Randomize button.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <button
+                        id="regenerate"
+                        type="button"
+                        class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                        >Proceed</button
+                    >
+                    <p
+                        class="text-sm font-light text-gray-500 dark:text-gray-400"
+                    >
+                        Already have an account? <a
+                            href="#"
+                            class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                            >Sign in</a
+                        >
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import { generateMnemonic } from "../components/login";
+
+    const wordsElement = document.getElementById("words");
+
+    function generate() {
+        const m = generateMnemonic();
+
+        wordsElement.innerHTML = "";
+
+        for (let i = 0; i < m.length; i++) {
+            const span = document.createElement("span");
+            span.innerHTML = "<sup>" + (i + 1) + "</sup> " + m[i];
+            span.className =
+                "text-xs font-semibold inline-block py-1 px-2 uppercase rounded text-pink-600 bg-pink-200 uppercase last:mr-0 mr-1 mt-1";
+
+            wordsElement.appendChild(span);
+        }
+
+        console.dir(m);
+    }
+
+    generate();
+
+    const submitButton = document.getElementById("regenerate");
+    submitButton?.addEventListener("click", () => {
+        generate();
+    });
+</script>
