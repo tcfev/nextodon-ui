@@ -27,7 +27,6 @@ export function words(): string[] {
 
 export async function login(mnemonic: string, passphrase: string): Promise<string | null> {
     const mnemonicObject = ethers.Mnemonic.fromPhrase(mnemonic, passphrase);
-    console.log(mnemonicObject)
     const node = ethers.HDNodeWallet.fromMnemonic(mnemonicObject);
     const wallet = node.derivePath("m/44'/60'/0'/0/0");
     const digest = ethers.sha256(wallet.publicKey);
