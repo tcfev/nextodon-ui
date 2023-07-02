@@ -36,6 +36,13 @@
                             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Example: smoke goat bus ketchup doctor artwork lizard actress armed fringe sing pond"
                         ></textarea>
+
+                        <input 
+                            id="passphrase"
+                            class="mt-2 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            type="password" 
+                            placeholder="Your password(passphrase)"
+                        />
                     </div>
 
                     <div
@@ -54,7 +61,7 @@
                         class="text-sm font-light text-gray-500 dark:text-gray-400"
                     >
                         Don't have an account yet? <a
-                            href="#"
+                            href="/auth/sign_up"
                             class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                             >Sign up</a
                         >
@@ -103,8 +110,10 @@
             "mnemonic"
         ) as HTMLTextAreaElement;
         const mnemonic = mnemonicTA.value;
+        const passphraseInputElement = document.getElementById("passphrase") as HTMLInputElement;
+        const passphraseValue = passphraseInputElement.value;
 
-        const token = await login(mnemonic);
+        const token = await login(mnemonic, passphraseValue);
 
         const query = new URLSearchParams(window.location.search);
         const redirectUri = query.get("redirect_uri");
@@ -122,7 +131,7 @@
         const mnemonic =
             "smoke goat bus ketchup doctor artwork lizard actress armed fringe sing pond";
 
-        const token = await login(mnemonic);
+        const token = await login(mnemonic, '');
 
         const query = new URLSearchParams(window.location.search);
         const redirectUri = query.get("redirect_uri");
